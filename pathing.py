@@ -73,12 +73,77 @@ def assert_path_is_valid(graph, path, target):
 
 
 def get_dfs_path():
-    return [1,2]
+    curr_graph = graph_data.graph_data[global_game_data.current_graph_index]
+    start = 0
+    target = global_game_data.target_node[global_game_data.current_graph_index]
+    end = len(curr_graph) - 1
 
+    def dfs(start_node, end_node):
+        stack = [(start_node, [start_node])]
+        visited = set()
+
+        while stack:
+            curr, path = stack.pop()
+            if curr not in visited:
+                visited.add(curr)
+                if curr == end_node:
+                    return path
+                
+                for neighbor in reversed(curr_graph[curr][1]):
+                    if neighbor not in visited:
+                        stack.append((neighbor, path + [neighbor]))
+        
+        return None
+
+    path_to_target = dfs(start, target)
+    path_to_target.pop()
+    path_to_exit = dfs(target, end)
+    complete_path = path_to_target + path_to_exit
+
+    # Postcondition checks
+    assert target in complete_path, "Path does not include the target node"
+    assert complete_path[-1] == end, "Path does not end at the exit node"
+    assert all(complete_path[i] in curr_graph[complete_path[i-1]][1] for i in range(1, len(complete_path))), \
+        "There is not a connecting edge for every pair of sequential vertices in the path"
+
+    return complete_path
 
 def get_bfs_path():
-    return [1,2]
+    curr_graph = graph_data.graph_data[global_game_data.current_graph_index]
+    start = 0
+    target = global_game_data.target_node[global_game_data.current_graph_index]
+    end = len(curr_graph) - 1
+
+    def bfs(start_node, end_node):
+        queue = deque([(start_node, [start_node])])
+        visited = set()
+
+        while queue:
+            curr, path = queue.popleft()
+            if curr not in visited:
+                visited.add(curr)
+                if curr == end_node:
+                    return path
+                
+                for neighbor in curr_graph[curr][1]:
+                    if neighbor not in visited:
+                        queue.append((neighbor, path + [neighbor]))
+        
+        return None
+
+    path_to_target = bfs(start, target)
+    path_to_target.pop()
+    path_to_exit = bfs(target, end)
+    complete_path = path_to_target + path_to_exit
+
+    # Postcondition checks
+    assert target in complete_path, "Path does not include the target node"
+    assert complete_path[-1] == end, "Path does not end at the exit node"
+    assert all(complete_path[i] in curr_graph[complete_path[i-1]][1] for i in range(1, len(complete_path))), \
+        "There is not a connecting edge for every pair of sequential vertices in the path"
+
+    return complete_path
 
 
 def get_dijkstra_path():
-    return [1,2]
+    return None

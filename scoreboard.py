@@ -12,6 +12,7 @@ class Scoreboard:
     player_excess_distance_display = []
     player_path_display = []
     player_unique_visited_nodes = []
+    winner = ''
 
     def __init__(self, batch, group):
         self.batch = batch
@@ -61,6 +62,12 @@ class Scoreboard:
                                    font_size=self.font_size, batch=batch, group=group, color=player[2][colors.TEXT_INDEX])
             self.player_unique_visited_nodes.append(
                 (unique_visited_nodes_label, player))
+            self.winner_display = pyglet.text.Label("",
+                                                x=0,
+                                                y=0,
+                                                font_name='Arial',
+                                                font_size=self.font_size, batch=batch, group=group)
+            
             
 
     def update_elements_locations(self):
@@ -68,19 +75,22 @@ class Scoreboard:
         self.distance_to_exit_label.y = config_data.window_height - self.stat_height
         for index, (display_element, player) in enumerate(self.player_name_display):
             display_element.x = config_data.window_width - self.stat_width
-            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 2 - self.stat_height * (index * self.number_of_stats)
+            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 3 - self.stat_height * (index * self.number_of_stats)
         for index, (display_element, player) in enumerate(self.player_traveled_display):
             display_element.x = config_data.window_width - self.stat_width
-            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 3 - self.stat_height * (index * self.number_of_stats)
+            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 4 - self.stat_height * (index * self.number_of_stats)
         for index, (display_element, player) in enumerate(self.player_excess_distance_display):
             display_element.x = config_data.window_width - self.stat_width
-            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 4 - self.stat_height * (index * self.number_of_stats)
+            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 5 - self.stat_height * (index * self.number_of_stats)
         for index, (display_element, player) in enumerate(self.player_path_display):
             display_element.x = config_data.window_width - self.stat_width
-            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 5 - self.stat_height * (index * self.number_of_stats)
+            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 6 - self.stat_height * (index * self.number_of_stats)
         for index, (display_element, player) in enumerate(self.player_unique_visited_nodes):
             display_element.x = config_data.window_width - self.stat_width
-            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 6 - self.stat_height * (index * self.number_of_stats)
+            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 7 - self.stat_height * (index * self.number_of_stats)
+        self.winner_display.x = config_data.window_width - self.stat_width
+        self.winner_display.y = config_data.window_height - self.base_height_offset - self.stat_height * 2
+
 
     def update_paths(self):
         for index in range(len(config_data.player_data)):
@@ -115,12 +125,25 @@ class Scoreboard:
                 if player_object.player_config_data == player_configuration_info:
                     unique_nodes_visted = len(set(global_game_data.graph_paths[index]))
                     display_element.text = "Number of unique nodes visited: " + str(unique_nodes_visted)
-
-
     
+    def update_winner(self):
+        curr_players = len(config_data.player_data)
+        shortest_path_len = float('inf')
+        winner_index = -1
+
+        for index, player_path in enumerate(global_game_data.graph_paths):
+            if index >= curr_players:
+                break # Josh's request
+            if len(player_path) < shortest_path_len:
+                shortest_path_len = len(player_path)
+                winner_index = index
+        winner_name = config_data.player_data[winner_index][0]
+        self.winner_display.text = f'Winner: {winner_name}'
+
     def update_scoreboard(self):
         self.update_elements_locations()
         self.update_paths()
         self.update_distance_to_exit()
         self.update_distance_traveled()
         self.update_unique_nodes_visited()
+        self.update_winner()
