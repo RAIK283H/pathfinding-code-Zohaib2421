@@ -98,7 +98,38 @@ class TestPathFinding(unittest.TestCase):
         self.assertNotEqual(permutation.detect_hamiltonian_cycle(another), -1, 'Does not find a cycle in another graph')
         self.assertEqual(permutation.detect_hamiltonian_cycle(graph_data.graph_data[0]), -1, 'Finds non-present cycle in graph[0]')
         self.assertEqual(permutation.detect_hamiltonian_cycle(graph_data.graph_data[0]), -1, 'Finds non-present cycle in graph[1]')
+    
+    def test_dijkstra_on_big_graph(self):
+        graph = graph_data.graph_data[2]
+        start = 0
+        target = 22
+        end = len(graph) - 1
 
+        first_part = pathing.dijkstra(start, target, graph)
+        first_part.pop()
+        second_part = pathing.dijkstra(target, end, graph)
+        complete_path = first_part + second_part
+        expected_path = [0, 22, 0, 21, 23]
+
+        self.assertEqual(complete_path[0], start, "Dijkstra path does not start at the correct node")
+        self.assertEqual(complete_path, expected_path, "Dijkstra path does go to the correct nodes")
+        self.assertEqual(complete_path[-1], end, "Dijkstra path does not end at the correct ending node")
+
+    def test_dijkstra_on_small_graph(self):
+        graph = graph_data.graph_data[0]
+        start = 0
+        target = 2
+        end = len(graph) - 1
+
+        first_part = pathing.dijkstra(start, target, graph)
+        first_part.pop()
+        second_part = pathing.dijkstra(target, end, graph)
+        complete_path = first_part + second_part
+        expected_path = [0, 1, 2]
+
+        self.assertEqual(complete_path[0], start, "Dijkstra path does not start at the correct node")
+        self.assertEqual(complete_path, expected_path, "Dijkstra path does go to the correct nodes")
+        self.assertEqual(complete_path[-1], end, "Dijkstra path does not end at the correct ending node")
 
 if __name__ == '__main__':
     unittest.main()

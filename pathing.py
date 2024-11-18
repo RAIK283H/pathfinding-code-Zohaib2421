@@ -1,6 +1,8 @@
 from collections import deque
+import heapq
 import graph_data
 import global_game_data
+from node import Node
 from random import shuffle
 
 def set_current_graph_paths():
@@ -144,6 +146,55 @@ def get_bfs_path():
 
     return complete_path
 
+def dijkstra(start, target, graph):
+    queue = []
+    heapq.heappush(queue, Node(start, 0))
+    distances = {start: 0}
+    previous_nodes = {start: None}
+    visited = set()
+
+    while queue:
+        current_node = heapq.heappop(queue).val
+        if current_node not in visited:
+            visited.add(current_node)
+
+            for neighbor in graph[current_node][1]:
+                if neighbor not in visited:
+                    new_distance = distances[current_node] + 1
+                    if new_distance < distances.get(neighbor, float('inf')):
+                        distances[neighbor] = new_distance
+                        previous_nodes[neighbor] = current_node
+                        heapq.heappush(queue, Node(neighbor, new_distance))
+    
+    path = []
+    current = target
+    while current is not None:
+        path.append(current)
+        current = previous_nodes[current]
+    path.reverse()
+    return path
+
+def dijkstra_post_conditions(graph, path, target):
+    assert path[0] == 0, "Path does not start at the correct node"
+    assert target in path, "Path does not include the target node"
+    assert path[-1] == len(graph) - 1, "Path does not end at the exit node"
+    assert all(path[i] in graph[path[i-1]][1] for i in range(1, len(path))), \
+        "There is not a connecting edge for every pair of sequential vertices in the path"
+
+    return path
 
 def get_dijkstra_path():
-    return None
+    graph = graph_data.graph_data[global_game_data.current_graph_index]
+    target_node = global_game_data.target_node[global_game_data.current_graph_index]
+    start_node = 0
+    end_node = len(graph) - 1
+    
+    start_to_target = dijkstra(start_node, target_node, graph)
+    start_to_target.pop() # ensure that the target node is not included twice in the path
+    target_to_end = dijkstra(target_node, end_node, graph)
+    complete_path = start_to_target + target_to_end
+
+    # Postcondition checks
+    dijkstra_post_conditions(graph, complete_path, target_node)
+
+    return complete_path

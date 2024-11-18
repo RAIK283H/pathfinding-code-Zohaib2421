@@ -19,3 +19,5 @@ The Random player should generate a random path from the start node to the exit 
 
     For the extra statistic, I have chosen to show the amount of unique nodes visited. This gives insight into how much of the actual graph is explored. This is useful because if there are 30 nodes in a graph and the random path is bouncing between two nodes and then goes to the end node, it may be hard to see that by simply looking at the random path because of its long length.
     This statistic will make it easier to understand cases like that and others similar.
+
+On homework 6, I attempted extra credit with the "implement the heapq" bullet point
