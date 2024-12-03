@@ -164,7 +164,6 @@ class TestPathFinding(unittest.TestCase):
         end = len(graph) - 1
         path = f_w.floyd_warshall_path(graph)
         dijkstra_path = pathing.dijkstra(start, end, graph)
-        print(path)
         self.assertEqual(path[0], start, "Floyd-Warshall path does not start at the correct node")
         self.assertEqual(path[-1], end, "Floyd-Warshall path does not end at the correct ending node")
         self.assertTrue(all(path[i] in graph[path[i-1]][1] for i in range(1, len(path))),
