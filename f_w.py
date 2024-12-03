@@ -1,8 +1,5 @@
-example_graph = [
-    [(0, 0), [1]],
-    [(200, -200), [0, 2]],
-    [(200, -400), [1]]
-]
+import graph_data
+example_graph = graph_data.graph_data[2]
 
 def floyd_warshall(graph):
     n = len(graph)
@@ -30,12 +27,15 @@ def floyd_warshall_path(graph):
     start, end = 0, len(graph) - 1
     return get_path(P, start, end)
 
+
 def get_path(P, i, j):
     path = []
     z = P[i][j]
     while z != -1:
-        path.append(z)
+        path.insert(0,z)
         z = P[i][z]
     path.insert(0, i)
     path.append(j)
     return path
+
+floyd_warshall_path(example_graph)

@@ -157,6 +157,19 @@ class TestPathFinding(unittest.TestCase):
         self.assertTrue(all(path[i] in graph[path[i-1]][1] for i in range(1, len(path))),
                         "Floyd-Warshall path contains nodes that are not connected in the graph")
         self.assertEqual(path, dijkstra_path, "Floyd-Warshall path is not the same as Dijkstra path")
+    
+    def test_floyd_warshall_on_smaller_graph(self):
+        graph = graph_data.graph_data[4]
+        start = 0
+        end = len(graph) - 1
+        path = f_w.floyd_warshall_path(graph)
+        dijkstra_path = pathing.dijkstra(start, end, graph)
+        print(path)
+        self.assertEqual(path[0], start, "Floyd-Warshall path does not start at the correct node")
+        self.assertEqual(path[-1], end, "Floyd-Warshall path does not end at the correct ending node")
+        self.assertTrue(all(path[i] in graph[path[i-1]][1] for i in range(1, len(path))),
+                        "Floyd-Warshall path contains nodes that are not connected in the graph")
+        self.assertEqual(path, dijkstra_path, "Floyd-Warshall path is not the same as Dijkstra path")
 
 if __name__ == '__main__':
     unittest.main()
