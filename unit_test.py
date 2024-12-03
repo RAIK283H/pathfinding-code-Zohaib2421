@@ -4,6 +4,7 @@ import unittest
 import pathing
 import graph_data, global_game_data
 import permutation
+import f_w
 
 
 class TestPathFinding(unittest.TestCase):
@@ -130,6 +131,32 @@ class TestPathFinding(unittest.TestCase):
         self.assertEqual(complete_path[0], start, "Dijkstra path does not start at the correct node")
         self.assertEqual(complete_path, expected_path, "Dijkstra path does go to the correct nodes")
         self.assertEqual(complete_path[-1], end, "Dijkstra path does not end at the correct ending node")
+    
+    def test_floyd_warshall(self):
+        graph = graph_data.graph_data[0]
+        start = 0
+        end = len(graph) - 1
+        path = f_w.floyd_warshall_path(graph)
+        dijkstra_path = pathing.dijkstra(start, end, graph)
+
+        self.assertEqual(path[0], start, "Floyd-Warshall path does not start at the correct node")
+        self.assertEqual(path[-1], end, "Floyd-Warshall path does not end at the correct ending node")
+        self.assertTrue(all(path[i] in graph[path[i-1]][1] for i in range(1, len(path))),
+                        "Floyd-Warshall path contains nodes that are not connected in the graph")
+        self.assertEqual(path, dijkstra_path, "Floyd-Warshall path is not the same as Dijkstra path")
+    
+    def test_floyd_warshall_on_big_graph(self):
+        graph = graph_data.graph_data[2]
+        start = 0
+        end = len(graph) - 1
+        path = f_w.floyd_warshall_path(graph)
+        dijkstra_path = pathing.dijkstra(start, end, graph)
+
+        self.assertEqual(path[0], start, "Floyd-Warshall path does not start at the correct node")
+        self.assertEqual(path[-1], end, "Floyd-Warshall path does not end at the correct ending node")
+        self.assertTrue(all(path[i] in graph[path[i-1]][1] for i in range(1, len(path))),
+                        "Floyd-Warshall path contains nodes that are not connected in the graph")
+        self.assertEqual(path, dijkstra_path, "Floyd-Warshall path is not the same as Dijkstra path")
 
 if __name__ == '__main__':
     unittest.main()

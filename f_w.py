@@ -39,6 +39,3 @@ def get_path(P, i, j):
     path.insert(0, i)
     path.append(j)
     return path
-    
-
-print(floyd_warshall_path(example_graph))
